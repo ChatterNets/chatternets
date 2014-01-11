@@ -32,8 +32,6 @@ chatternet_jquery_loading_script.onload = function() {
     });
     $("body").css("overflow", "scroll").after(frame);
 
-    $("body").css("paddingRight", frameWidth).append(frame);
-
     window.onbeforeunload = function() {
         console.log("before unloading")
         $.ajax({ /* //chatternets.herokuapp.com */
