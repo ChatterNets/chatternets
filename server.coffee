@@ -230,5 +230,7 @@ server.listen port, ->
 wss.on 'connection', (socket) =>
   console.log 'saw connection'
   summary = getFullSummary()
+  console.log("FULL SUMMARY")
+  console.log summary
   # Send over the current data of how many people are on which pages
   socket.send(JSON.stringify({"name": 'peer_urls', "data": summary}))

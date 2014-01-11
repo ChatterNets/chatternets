@@ -158,66 +158,6 @@ h1 {
 
 <body>
 
-<script>
-$(function() {
-    $('#setup-instructions').addClass('animated slideInDown');
-
-    var $container = $('#sample-user-container');
-    $container.masonry({
-        columnWidth: 10,
-        itemSelector: '.sample-user',
-        isOriginLeft: true
-    });
-
-    var numUsersAdded = 0;
-    var interval = setInterval(function() {
-        if (numUsersAdded > 0) {
-            $(".sample-user")
-                .removeClass("u" + (numUsersAdded-1))
-                .addClass("u" + numUsersAdded);
-            
-            var elem = $("<div />").addClass(
-                "sample-user other u" + numUsersAdded);
-
-            var icon = $("<i />").addClass("fa fa-users");
-
-            elem.append(icon);
-        } else {
-            elem = $('<div class="sample-user me"><i class="fa fa-user"></i></div>')
-        }
-        $container.append(elem);
-        $container.masonry('appended', elem);
-        $container.masonry();
-
-        numUsersAdded++;
-        if (numUsersAdded === 3) {
-            window.clearInterval(interval);
-        }
-    }, 400);
-
-    var waitingForUsers = true;
-    var $videoContainer = $("#video-container");
-    $videoContainer.on("user_connected", function() {
-        console.log("on user_connected");
-        if (waitingForUsers) {
-            $(".waiting-message").slideUp();
-            var $myVideo = $(".my-video-container-waiting");
-            $myVideo.removeClass("well my-video-container-waiting");
-            $myVideo.addClass("my-video-container user");
-            waitingForUsers = false;
-            console.log("no longer Waiting for users");
-            /*$videoContainer.masonry({
-                columnWidth: 20,
-                itemSelector: '.user',
-                isOriginLeft: false,
-                gutter: 10
-            });*/
-        }
-        //$videoContainer.masonry();
-    });
-});
-</script>
-
 <div class="intro">
     <div id="setup-error" class="well">
         <p>

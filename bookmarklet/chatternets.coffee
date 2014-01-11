@@ -6,7 +6,7 @@ navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia 
 
 class Chatternet
 
-  constructor: ->
+  constructor: (@ui) ->
     @peer = null
     @urlId = null
     @pageId = window.location.toString().split("?")[1].split("=")[1]
@@ -57,7 +57,7 @@ class Chatternet
     navigator.getUserMedia {audio: true, video: true}, (stream) =>
       @handleStartedLocalStream(stream, peerIdsToConnect)
     , () =>
-        console.log "error starting local stream"
+        console.error "Error starting local stream!"
         $('#setup-error').show()
         $("#setup-instructions").hide()
 
@@ -67,10 +67,10 @@ class Chatternet
     $('#setup-instructions').addClass('animated slideOutUp');
     $('.intro').fadeOut('slow')
     $('#video-container').show()
-    $('#my-video').prop('src', URL.createObjectURL(stream))
+    $('#my-video').prop('src', window.URL.createObjectURL(stream))
     window.localStream = stream
 
-    console.log "loaded local stream"
+    console.log "Loaded local stream"
     for peerId in peerIdsToConnect
       @callPeer(peerId) # Has to happen after window.localStream is set
 
@@ -95,6 +95,8 @@ class Chatternet
   removePeerVideoCall: (call, videoSelector) =>
     $(videoSelector).remove()
     delete @openCalls[call.peer]
+    if $.isEmptyObject(@openCalls)
+      @ui.usersIsZero()
 
   # Display a video stream for the call -- may be in response to a peer calling us,
   # or us calling another peer.
@@ -116,14 +118,65 @@ class Chatternet
     @openCalls[call.peer] = call  # Save the call in the list of openCalls.
 
   handlePeerError: (err) =>
-    console.log("PEER ERROR: ")
+    console.log("== PEER ERROR: ==")
     console.log err
     # TODO tell server about error
 
+class initialContainer
+  constructor: ->
+    @waitingForUsers = true
+
+  start: ->
+    $('#setup-instructions').addClass('animated slideInDown')
+
+    $container = $('#sample-user-container')
+    $container.masonry
+        columnWidth: 10,
+        itemSelector: '.sample-user',
+        isOriginLeft: true
+
+    numUsersAdded = 0;
+    interval = setInterval () ->
+        if (numUsersAdded > 0)
+          $(".sample-user").removeClass("u" + (numUsersAdded-1)).addClass("u" + numUsersAdded)
+          elem = $("<div />").addClass("sample-user other u" + numUsersAdded)
+          icon = $("<i />").addClass("fa fa-users")
+          elem.append(icon)
+        else
+          elem = $('<div class="sample-user me"><i class="fa fa-user"></i></div>')
+        $container.append(elem)
+        $container.masonry('appended', elem)
+        $container.masonry()
+        numUsersAdded += 1
+        if (numUsersAdded == 3)
+            window.clearInterval(interval)
+    , 400
+
+    $videoContainer = $("#video-container")
+    $videoContainer.on "user_connected", () =>
+        console.log("on user_connected")
+        if (@waitingForUsers)
+          $(".waiting-message").slideUp()
+          @waitingForUsers = false
+          $myVideo = $(".my-video-container-waiting")
+          if $myVideo
+            $myVideo.removeClass("well my-video-container-waiting")
+            $myVideo.addClass("my-video-container user")
+          console.log("no longer Waiting for users")
+
+  usersIsZero: ->
+    @waitingForUsers = true
+    $(".waiting-message").slideDown()
+
 
 $(document).ready ->
-  chatternet = new Chatternet()
+  ui = new initialContainer()
+  ui.start()
+
+  chatternet = new Chatternet(ui)
   chatternet.start()
+
+
 
 
 #   // Hang up on an existing call if present

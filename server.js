@@ -259,6 +259,8 @@
     var summary;
     console.log('saw connection');
     summary = getFullSummary();
+    console.log("FULL SUMMARY");
+    console.log(summary);
     return socket.send(JSON.stringify({
       "name": 'peer_urls',
       "data": summary
