@@ -22,6 +22,18 @@
     return res.sendfile('bookmarklet/compiled/' + req.params.file);
   });
 
+  app.post('/new_peer', function(req, res) {
+    console.log(req, res);
+  });
+
+  app.post('/delete_peer', function(req, res) {
+    console.log(req, res);
+  });
+
+  app.post('/update_peer', function(req, res) {
+    console.log(req, res);
+  });
+
   port = process.env.PORT || 5000;
 
   app.listen(port, function() {
