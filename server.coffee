@@ -110,6 +110,9 @@ app.get '/bookmarklet/:file', (req, res) ->
 app.get '/bookmarklet/compiled/:file', (req, res) ->
   res.sendfile('bookmarklet/compiled/' + req.params.file)
 
+app.get '/bookmarklet/library/:file', (req, res) ->
+  res.sendfile('bookmarklet/library/' + req.params.file)
+
 # Create a new peer for the given url
 app.post '/new_peer', (req, res) ->
   if not req.body.hasOwnProperty("full_url")
