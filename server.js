@@ -23,15 +23,15 @@
   });
 
   app.post('/new_peer', function(req, res) {
-    console.log(req, res);
+    return console.log(req, res);
   });
 
   app.post('/delete_peer', function(req, res) {
-    console.log(req, res);
+    return console.log(req, res);
   });
 
   app.post('/update_peer', function(req, res) {
-    console.log(req, res);
+    return console.log(req, res);
   });
 
   port = process.env.PORT || 5000;

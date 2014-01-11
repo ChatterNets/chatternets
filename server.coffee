@@ -15,6 +15,16 @@ app.get '/bookmarklet/:file', (req, res) ->
 app.get '/bookmarklet/compiled/:file', (req, res) ->
   res.sendfile('bookmarklet/compiled/' + req.params.file)
 
+app.post '/new_peer', (req, res) ->
+  console.log(req, res)
+
+app.post '/delete_peer', (req, res) ->
+  console.log(req, res)
+
+app.post '/update_peer', (req, res) ->
+  console.log(req, res)
+
+
 port = process.env.PORT || 5000
 
 app.listen port, ->
