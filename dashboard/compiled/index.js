@@ -7,8 +7,6 @@
 
   urlArr = [];
 
-  console.log(Handlebars.templates);
-
   peer_template = Handlebars.templates["active_peer_site"];
 
   updateItem = function(url, peer_count) {
@@ -32,8 +30,6 @@
 
   updateUI = function() {
     var item, _i, _len;
-    console.log("TEMPLATES");
-    console.log(Handlebars.templates);
     $(".active-peer-sites").empty();
     urlArr.sort(function(a, b) {
       return a.peer_count - b.peer_count;
@@ -57,19 +53,17 @@
     host = location.origin.replace(/^http/, 'ws');
     ws = new WebSocket(host);
     return ws.onmessage = function(event) {
-      var data, item, _i, _len, _ref, _results;
+      var data, item, _i, _len, _ref;
       console.log("MESSAGE");
       console.log(event.data);
       data = JSON.parse(event.data);
       if (data.name === "peer_urls") {
         _ref = data.data;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           item = _ref[_i];
           updateItem(item[0], item[1]);
-          _results.push(updateUI());
         }
-        return _results;
+        return updateUI();
       } else if (data.name === "peer-connected" || data.name === "peer-disconnected") {
         updateItem(data.data.url, data.data.peer_count);
         updateUI();

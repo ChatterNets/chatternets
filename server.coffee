@@ -3,11 +3,9 @@
 express = require("express")
 logfmt = require("logfmt")
 uuid = require('node-uuid')
-# io = require('socket.io')
 app = express()
 WebSocketServer = require('ws').Server
 server = require('http').createServer(app)
-# io = io.listen(server)
 
 wss = new WebSocketServer({server: server});
 wss.broadcast = (data) =>
@@ -94,7 +92,7 @@ onPeerConnected = (urlRaw, pageId) ->
   pageIdToPeerAndUrlId[pageId] = {"peerId": peerId, "urlId": urlId}
   getFullSummary() # TODO REMOVE
   console.log "EMIT PEER CONNECTED"
-  # io.sockets.emit('peer-connected', {"url": urlNormal, "peer_count": getPeerCount(urlNormal)});
+
   wss.broadcast(JSON.stringify({'name': 'peer-connected', 'data': {"url": urlNormal, "peer_count": getPeerCount(urlNormal)}}));
   return { peer_id: peerId, url_id: urlId, peers: peerIds}
 
@@ -141,7 +139,7 @@ onPeerDisconnected = (pageId) ->
 
   delete pageIdToPeerAndUrlId[pageId]
   console.log("URL" + url)
-  # io.sockets.emit('peer-disconnected', {"url": url, "peer_count": getPeerCount(url)});
+
   wss.broadcast(JSON.stringify({'name': 'peer-disconnected', 'data': {"url": url, "peer_count": getPeerCount(url)}}));
   return { success: true }
 
@@ -231,10 +229,5 @@ server.listen port, ->
 wss.on 'connection', (socket) =>
   console.log 'saw connection'
   summary = getFullSummary()
-  console.log(JSON.stringify(summary,null, 4))
-  # Send over the current data of how many people are on which pages (maybe suggest a few if none)
+  # Send over the current data of how many people are on which pages
   socket.send(JSON.stringify({"name": 'peer_urls', "data": summary}))
-  # Then, for each new connection that happens, emit to all sockets the new connection (?)
-  # socket.on 'video-exit', (data) =>
-  #   console.log('exit video')
-  #   console.log(data)
