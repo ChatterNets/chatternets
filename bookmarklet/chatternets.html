@@ -65,13 +65,35 @@ h1 {
 }
 
 #my-video {
+    width: 100px;
+    height: 75px;
+}
+
+.my-video-container.user {
+    float: none;
+    text-align: right;
+}
+.user {
+    float: right;
+    margin-left: 6px;
+}
+
+.my-video-container-waiting #my-video {
     width: 100%;
+    height: 100%;
+}
+.my-video-container-waiting {
+    width: 360px;
+    margin: 20px;
+    height: 280px;
+}
+.waiting-message {
+    margin: 20px;
 }
 
 .their-video {
-    width: 180px;
-    height: auto;
-    background-color: #eee;
+    width: 194px;
+    height: 98px;
 }
 
 #video-container {
@@ -125,24 +147,24 @@ $(function() {
     }, 300);
 
     var waitingForUsers = true;
-    var $userContainer = $("#user-container");
-    $userContainer.on("user_connected", function() {
+    var $videoContainer = $("#video-container");
+    $videoContainer.on("user_connected", function() {
+        console.log("on user_connected");
         if (waitingForUsers) {
             $(".waiting-message").fadeOut();
-            var $myVideo = $(".my-video-container");
-            $myVideo.removeClass("well");
-            $myVideo.width(100);
+            var $myVideo = $(".my-video-container-waiting");
+            $myVideo.removeClass("well my-video-container-waiting");
+            $myVideo.addClass("my-video-container user");
             waitingForUsers = false;
             console.log("no longer Waiting for users");
-            $userContainer.masonry({
+            /*$videoContainer.masonry({
                 columnWidth: 20,
                 itemSelector: '.user',
                 isOriginLeft: false,
                 gutter: 10
-            });
-        } else {
-            $userContainer.masonry();
+            });*/
         }
+        //$videoContainer.masonry();
     });
 });
 </script>
@@ -180,10 +202,8 @@ $(function() {
 
 <!-- Video area -->
 <div id="video-container">
-    <div id="user-container">
-        <div class="well my-video-container user">
-            <video id="my-video" muted="true" autoplay></video>
-        </div>
+    <div class="well my-video-container-waiting">
+        <video id="my-video" muted="true" autoplay></video>
     </div>
 
     <div class="waiting-message well">

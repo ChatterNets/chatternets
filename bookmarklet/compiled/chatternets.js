@@ -94,9 +94,8 @@
     Chatternet.prototype.handleStartedLocalStream = function(stream, peerIdsToConnect) {
       var peerId, _i, _len, _results;
       $('#setup-instructions').addClass('animated slideOutUp');
-      $('.intro').fadeOut('slow', function() {
-        return $('#video-container').fadeIn();
-      });
+      $('.intro').fadeOut('slow');
+      $('#video-container').show();
       $('#my-video').prop('src', URL.createObjectURL(stream));
       window.localStream = stream;
       console.log("loaded local stream");
@@ -138,7 +137,7 @@
       console.log("call peer id is " + call.peer);
       videoClass = "their-video " + call.peer;
       videoSelector = "#video-container .their-video." + call.peer;
-      $("#user-container").append("<div class='user'><video class='" + videoClass + "' autoplay></video></div>").trigger('user_connected');
+      $("#video-container").append("<div class='user'><video class='" + videoClass + "' autoplay></video></div>").trigger('user_connected');
       call.on('stream', function(stream) {
         return $(videoSelector).prop('src', URL.createObjectURL(stream));
       });
