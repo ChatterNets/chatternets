@@ -176,6 +176,19 @@ $(document).ready ->
   chatternet = new Chatternet(ui)
   chatternet.start()
 
+  $("#video-container").on 'click', "video.their-video", (evt) =>
+    videoElem = $(evt.currentTarget)
+    console.log(videoElem)
+    if videoElem.prop('muted')
+      videoElem.prop('muted', false);
+      videoElem.attr('muted', false);
+      videoElem.removeClass("muted-video")
+    else
+      videoElem.prop('muted', true);
+      videoElem.attr('muted', true);
+      videoElem.addClass("muted-video")
+    console.log(videoElem.prop('muted'))
+
 
 
 

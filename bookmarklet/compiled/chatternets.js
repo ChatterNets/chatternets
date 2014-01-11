@@ -225,11 +225,27 @@
   })();
 
   $(document).ready(function() {
-    var chatternet, ui;
+    var chatternet, ui,
+      _this = this;
     ui = new initialContainer();
     ui.start();
     chatternet = new Chatternet(ui);
-    return chatternet.start();
+    chatternet.start();
+    return $("#video-container").on('click', "video.their-video", function(evt) {
+      var videoElem;
+      videoElem = $(evt.currentTarget);
+      console.log(videoElem);
+      if (videoElem.prop('muted')) {
+        videoElem.prop('muted', false);
+        videoElem.attr('muted', false);
+        videoElem.removeClass("muted-video");
+      } else {
+        videoElem.prop('muted', true);
+        videoElem.attr('muted', true);
+        videoElem.addClass("muted-video");
+      }
+      return console.log(videoElem.prop('muted'));
+    });
   });
 
 }).call(this);
