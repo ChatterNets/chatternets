@@ -1,42 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chatternets Dashboard</title>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-  <script src="/dashboard/library/handlebars.runtime-v1.3.0.js"></script>
-  <script src="/dashboard/compiled/active_peer_site.js"></script>
-  <link rel="stylesheet" href="../bookmarklet/css/bootstrap.min.css" type="text/css">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<title>Chatternets Dashboard</title>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script src="/dashboard/library/handlebars.runtime-v1.3.0.js"></script>
+<script src="/dashboard/compiled/active_peer_site.js"></script>
+<link rel="stylesheet" href="../bookmarklet/css/bootstrap.min.css" type="text/css">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-  <script src="/dashboard/compiled/index.js"></script>
+<script src="/dashboard/compiled/index.js"></script>
 <style>
-/*
-.active-peer-site {
-  font-size: 1em;
-  display: inline-block;
-  background-color: #F0F0F0;
-  border: 1px dotted black;
-  padding: 1em;
-}
-
-.active-peer-site .active-count {
-  font-size: 1.4em;
-  font-weight: 700;
-}
-.active-peer-site .url-name {
-  display:inline-block;
-    width: 200px;
-    height:20px;
-    overflow:hidden;
-}
-.active-peer-site .url-name:after {
-    content: '...';
-    position: absolute;
-    bottom: -3px;
-    right: 18px;
-}
-*/
-
 .header {
     width: 100%;
     height: 220px;
@@ -55,50 +28,54 @@
 }
 
 .arrow {
-background-image: url('/dashboard/img/arrow.png');
-width: 113px;
-height: 145px;
-background-repeat: no-repeat;
-background-size: 100%;
-position: absolute;
-top: 0;
-right: 10px;
+    background-image: url('/dashboard/img/arrow.png');
+    width: 113px;
+    height: 145px;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    position: absolute;
+    top: 0;
+    right: 10px;
 }
 
 .bookmarklet {
-position: absolute;
-top: 0;
-right: 133px;
-background-color: rgba(255, 255, 255, 0.2);
-padding: 10px 40px;
-height: 100%;
-width: 700px;
+    position: absolute;
+    top: 0;
+    right: 133px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 10px 40px;
+    height: 100%;
+    width: 700px;
 }
 
 .bookmarklet-link {
-padding: 10px;
-border-radius: 10px;
-background-color: #CFDAE4;
-margin: 26px 110px 0 0;
-display: block;
-color: #0057A3;
-font-weight: bold;
-text-align: center;
-cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
-font-size: 28px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: antiquewhite;
+    margin: 26px 110px 0 0;
+    display: block;
+    color: #0057A3;
+    font-weight: bold;
+    text-align: center;
+    cursor: url(https://mail.google.com/mail/images/2/openhand.cur), default !important;
+    font-size: 28px;
+}
+.bookmarklet-link:hover {
+    text-decoration: none;
+    color: #0057A3;
 }
 
 .instructions {
-font-size: 28px;
-color: #EEE;
+    font-size: 28px;
+    color: #EEE;
 }
 .instructions b {
-font-size: 32px;
+    font-size: 32px;
 }
 
 .step {
     font-size: 100px;
-color: #CCC;
+    color: #CCC;
 }
 
 .or {
@@ -152,30 +129,33 @@ color: #CCC;
 
 .active-count {
     text-align: center;
-display: block;
-position: absolute;
-top: -10px;
-right: -10px;
-font-weight: bold;
-font-size: 20px;
-background-color: #8D3E00;
-padding: 6px;
-border-radius: 100px;
-width: 40px;
-color: #D6BCA8;
+    display: block;
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: #8D3E00;
+    padding: 6px;
+    border-radius: 100px;
+    width: 40px;
+    color: #D6BCA8;
 }
 
-/* HACK to stamp over columns :( */
-.click-reminder {
-font-style: italic;
-color: #777;
-font-size: 18px;
-margin-top: 10px;
+.active-peer-sites {
+    text-align: center;
 }
 
 .steps {
     padding: 10px 0 50px 0;
     text-align: center;
+}
+
+.authors {
+    float: left;
+    margin-top: 120px;
+    color: #DDD;
+    font-size: 19px;
 }
 
 </style>
@@ -186,11 +166,15 @@ margin-top: 10px;
 <div class="header">
     <div class="bookmarklet">
         <p class="instructions">
-            <b>Getting Started</b><br>Save this bookmarklet to your bookmarks bar.
+        <b>Getting Started</b><br>Save this bookmarklet to your bookmarks bar.
         </p>
         <!-- TODO change to Heroku when deploying - will work for HTTPS as well then. -->
-        <a class="bookmarklet-link" href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='//chatternets.herokuapp.com/bookmarklet/bookmarklet.js';})();">Join Chatternet</a>
+        <a class="bookmarklet-link" href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='//chatternets.herokuapp.com/bookmarklet/bookmarklet.js';})();" onclick="return false">Join Chatternet</a>
         <div class="arrow"></div>
+    </div>
+
+    <div class="authors">
+        by Brie Bunge and Sophia Westwood
     </div>
 
     <div class="logo"></div>
@@ -238,12 +222,10 @@ margin-top: 10px;
         </div>
     </div>
 
+<a href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+
 </div>
-
-
-
-
-
 
 </body>
 </html>
