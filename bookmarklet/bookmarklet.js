@@ -1,11 +1,15 @@
 // TODO(brie): we don't really need jquery, but adding it for speed.
 // we can take it out later
-var js = document.createElement('script');
-js.src = "//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js";
-js.onload = function() {
+var chatternet_unique_page_id = window.location.host + Math.random().toString(36).slice(2);
+console.log(chatternet_unique_page_id)
+chatternet_jquery_loading_script = document.createElement('script')
+chatternet_jquery_loading_script.src = "//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js";
+
+
+chatternet_jquery_loading_script.onload = function() {
 
     var frame = $("<iframe/>");
-    frame.attr("src", "//chatternets.herokuapp.com/bookmarklet/chatternets.html");
+    frame.attr("src", "//localhost:5000/bookmarklet/chatternets.html?chatterid=" + chatternet_unique_page_id);
     frame.css({
         margin: "0px",
         padding: "0px",
@@ -19,6 +23,17 @@ js.onload = function() {
         height: "100%"
     });
     $("body").append(frame);
-
+    
+    window.onbeforeunload = function() {
+        console.log("before unloading")
+        $.ajax({
+          url: '//localhost:5000/delete_peer',
+          type: "POST",
+          data: {
+              page_id: chatternet_unique_page_id
+          },
+          async: false
+        });
+    }
 };
-document.head.appendChild(js);
+document.head.appendChild(chatternet_jquery_loading_script);

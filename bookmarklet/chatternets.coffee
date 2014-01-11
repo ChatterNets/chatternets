@@ -9,8 +9,10 @@ class Chatternet
   constructor: ->
     @peer = null
     @urlId = null
+    @pageId = window.location.toString().split("?")[1].split("=")[1]
     @rawUrl = document.referrer  # window.parent.location is blocked (XSS)
-    @openCalls = []
+    console.log @rawUrl
+    @openCalls = {}
 
   start: =>
     @getInitDataFromServer()
@@ -23,6 +25,7 @@ class Chatternet
       type: "POST"
       data:
         "full_url": @rawUrl
+        "page_id": @pageId
       success: (jsonData) =>
         @initPeerConnections(jsonData)
       error: (jqXHR, textStatus, errorThrown) ->
@@ -86,6 +89,10 @@ class Chatternet
     call.answer(window.localStream)  # TODO? Answers call immediately
     @addPeerVideoCall(call)
 
+  removePeerVideoCall: (call, videoSelector) =>
+    $(videoSelector).remove()
+    delete @openCalls[call.peer]
+
   # Display a video stream for the call -- may be in response to a peer calling us,
   # or us calling another peer.
   addPeerVideoCall: (call) =>
@@ -96,8 +103,11 @@ class Chatternet
     $("#video-container").append("<video class='" + videoClass+ "' autoplay></video>")
     call.on 'stream', (stream) ->
       $(videoSelector).prop('src', URL.createObjectURL(stream))
-
-    @openCalls.push(call)  # Save the call in the list of openCalls. TODO handle a call disconnecting
+    call.on 'close', =>
+      @removePeerVideoCall(call, videoSelector)
+    call.on 'error', =>
+      @removePeerVideoCall(call, videoSelector)
+    @openCalls[call.peer] = call  # Save the call in the list of openCalls.
 
   handlePeerError: (err) =>
     console.log("PEER ERROR: ")

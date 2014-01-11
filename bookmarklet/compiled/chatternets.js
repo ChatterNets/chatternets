@@ -11,6 +11,7 @@
     function Chatternet() {
       this.handlePeerError = __bind(this.handlePeerError, this);
       this.addPeerVideoCall = __bind(this.addPeerVideoCall, this);
+      this.removePeerVideoCall = __bind(this.removePeerVideoCall, this);
       this.handlePeerCalling = __bind(this.handlePeerCalling, this);
       this.handlePeerOpen = __bind(this.handlePeerOpen, this);
       this.callPeer = __bind(this.callPeer, this);
@@ -21,8 +22,10 @@
       this.start = __bind(this.start, this);
       this.peer = null;
       this.urlId = null;
+      this.pageId = window.location.toString().split("?")[1].split("=")[1];
       this.rawUrl = document.referrer;
-      this.openCalls = [];
+      console.log(this.rawUrl);
+      this.openCalls = {};
     }
 
     Chatternet.prototype.start = function() {
@@ -36,7 +39,8 @@
         url: "/new_peer",
         type: "POST",
         data: {
-          "full_url": this.rawUrl
+          "full_url": this.rawUrl,
+          "page_id": this.pageId
         },
         success: function(jsonData) {
           return _this.initPeerConnections(jsonData);
@@ -120,8 +124,14 @@
       return this.addPeerVideoCall(call);
     };
 
+    Chatternet.prototype.removePeerVideoCall = function(call, videoSelector) {
+      $(videoSelector).remove();
+      return delete this.openCalls[call.peer];
+    };
+
     Chatternet.prototype.addPeerVideoCall = function(call) {
-      var videoClass, videoSelector;
+      var videoClass, videoSelector,
+        _this = this;
       console.log("call peer id is " + call.peer);
       videoClass = "their-video " + call.peer;
       videoSelector = "#video-container .their-video." + call.peer;
@@ -129,7 +139,13 @@
       call.on('stream', function(stream) {
         return $(videoSelector).prop('src', URL.createObjectURL(stream));
       });
-      return this.openCalls.push(call);
+      call.on('close', function() {
+        return _this.removePeerVideoCall(call, videoSelector);
+      });
+      call.on('error', function() {
+        return _this.removePeerVideoCall(call, videoSelector);
+      });
+      return this.openCalls[call.peer] = call;
     };
 
     Chatternet.prototype.handlePeerError = function(err) {
