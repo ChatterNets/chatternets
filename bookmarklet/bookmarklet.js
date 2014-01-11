@@ -5,7 +5,7 @@ js.src = "//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js";
 js.onload = function() {
 
     var frame = $("<iframe/>");
-    frame.attr("src", "//localhost:5000/bookmarklet/chatternets.html");
+    frame.attr("src", "//chatternets.herokuapp.com/bookmarklet/chatternets.html");
     frame.css({
         margin: "0px",
         padding: "0px",
