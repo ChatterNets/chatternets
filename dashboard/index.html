@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chatternets Dashboard</title>
+</head>
+<style>
+a.bookmarklet-link {
+  display: inline-block;
+  padding: .5em;
+  background-color: #5FE9A0;
+}
+</style>
+<body>
+<h1>Join a chatternet!</h1>
+<h2>First, download the bookmarklet</h2>
+
+<p>
+Drag this link to your bookmarks bar!
+<!-- TODO change to Heroku when deploying -- will work for HTTPS as well then. -->
+<a class="bookmarklet-link" href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='//localhost:5000/bookmarklet/bookmarklet.js';})();">Join Chatternet</a>
+</p>
+
+</body>
+</html>
