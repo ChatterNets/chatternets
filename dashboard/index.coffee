@@ -31,23 +31,39 @@ updateUI = =>
 $(document).ready =>
   console.log(Handlebars.templates)
   peer_template =  Handlebars.templates["active_peer_site"]
-  socket = io.connect('//chatternets.herokuapp.com');
-  socket.on 'peer_urls', (data) =>
-    console.log(data);
-    for item in data
-      updateItem(item[0], item[1])
-    updateUI()
+  host = location.origin.replace(/^http/, 'ws')
+  ws = new WebSocket(host);
+  ws.onmessage =  (event) =>
+    console.log("MESSAGE")
+    console.log event.data
+    data = JSON.parse(event.data)
+    if data.name == "peer_urls"
+      for item in data.data
+        updateItem(item[0], item[1])
+        updateUI()
+    else if data.name == "peer-connected" || data.name == "peer-disconnected"
+      updateItem(data.data.url, data.data.peer_count)
+      updateUI()
+      console.log(data.data)
+
+
+  # socket = io.connect('//chatternets.herokuapp.com');
+  # socket.on 'peer_urls', (data) =>
+  #   console.log(data);
+  #   for item in data
+  #     updateItem(item[0], item[1])
+  #   updateUI()
     
 
-  socket.on 'peer-connected', (data) =>
-    updateItem(data.url, data.peer_count)
-    updateUI()
-    console.log(data)
+  # socket.on 'peer-connected', (data) =>
+  #   updateItem(data.url, data.peer_count)
+  #   updateUI()
+  #   console.log(data)
 
-  socket.on 'peer-disconnected', (data) =>
-    updateItem(data.url, data.peer_count)
-    updateUI()
-    console.log(data)
+  # socket.on 'peer-disconnected', (data) =>
+  #   updateItem(data.url, data.peer_count)
+  #   updateUI()
+  #   console.log(data)
 
 # <iframe src="#{url}" scrolling="no" ></iframe>
 # <div class="frame-overlay"></div>

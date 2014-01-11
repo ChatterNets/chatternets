@@ -51,29 +51,31 @@
   };
 
   $(document).ready(function() {
-    var socket;
+    var host, ws;
     console.log(Handlebars.templates);
     peer_template = Handlebars.templates["active_peer_site"];
-    socket = io.connect('//chatternets.herokuapp.com');
-    socket.on('peer_urls', function(data) {
-      var item, _i, _len;
-      console.log(data);
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        item = data[_i];
-        updateItem(item[0], item[1]);
+    host = location.origin.replace(/^http/, 'ws');
+    ws = new WebSocket(host);
+    return ws.onmessage = function(event) {
+      var data, item, _i, _len, _ref, _results;
+      console.log("MESSAGE");
+      console.log(event.data);
+      data = JSON.parse(event.data);
+      if (data.name === "peer_urls") {
+        _ref = data.data;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          item = _ref[_i];
+          updateItem(item[0], item[1]);
+          _results.push(updateUI());
+        }
+        return _results;
+      } else if (data.name === "peer-connected" || data.name === "peer-disconnected") {
+        updateItem(data.data.url, data.data.peer_count);
+        updateUI();
+        return console.log(data.data);
       }
-      return updateUI();
-    });
-    socket.on('peer-connected', function(data) {
-      updateItem(data.url, data.peer_count);
-      updateUI();
-      return console.log(data);
-    });
-    return socket.on('peer-disconnected', function(data) {
-      updateItem(data.url, data.peer_count);
-      updateUI();
-      return console.log(data);
-    });
+    };
   });
 
 }).call(this);

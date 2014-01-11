@@ -3,10 +3,18 @@
 express = require("express")
 logfmt = require("logfmt")
 uuid = require('node-uuid')
-io = require('socket.io')
+# io = require('socket.io')
 app = express()
+WebSocketServer = require('ws').Server
 server = require('http').createServer(app)
-io = io.listen(server)
+# io = io.listen(server)
+
+wss = new WebSocketServer({server: server});
+wss.broadcast = (data) =>
+  for client in wss.clients
+    client.send(data)
+
+console.log('websocket server created');
 
 app.use(logfmt.requestLogger())
 app.use(express.bodyParser())
@@ -86,7 +94,8 @@ onPeerConnected = (urlRaw, pageId) ->
   pageIdToPeerAndUrlId[pageId] = {"peerId": peerId, "urlId": urlId}
   getFullSummary() # TODO REMOVE
   console.log "EMIT PEER CONNECTED"
-  io.sockets.emit('peer-connected', {"url": urlNormal, "peer_count": getPeerCount(urlNormal)});
+  # io.sockets.emit('peer-connected', {"url": urlNormal, "peer_count": getPeerCount(urlNormal)});
+  wss.broadcast(JSON.stringify({'name': 'peer-connected', 'data': {"url": urlNormal, "peer_count": getPeerCount(urlNormal)}}));
   return { peer_id: peerId, url_id: urlId, peers: peerIds}
 
 # Remove the peer from the room identified by urlId.
@@ -132,7 +141,8 @@ onPeerDisconnected = (pageId) ->
 
   delete pageIdToPeerAndUrlId[pageId]
   console.log("URL" + url)
-  io.sockets.emit('peer-disconnected', {"url": url, "peer_count": getPeerCount(url)});
+  # io.sockets.emit('peer-disconnected', {"url": url, "peer_count": getPeerCount(url)});
+  wss.broadcast(JSON.stringify({'name': 'peer-disconnected', 'data': {"url": url, "peer_count": getPeerCount(url)}}));
   return { success: true }
 
 # These functions must take in (peerId, urlId) and return
@@ -218,14 +228,12 @@ server.listen port, ->
   console.log("Listening on " + port)
 
 
-io.sockets.on 'connection', (socket) =>
+wss.on 'connection', (socket) =>
   console.log 'saw connection'
   summary = getFullSummary()
   console.log(JSON.stringify(summary,null, 4))
   # Send over the current data of how many people are on which pages (maybe suggest a few if none)
-  socket.emit('peer_urls', summary)
-
-
+  socket.send(JSON.stringify({"name": 'peer_urls', "data": summary}))
   # Then, for each new connection that happens, emit to all sockets the new connection (?)
   # socket.on 'video-exit', (data) =>
   #   console.log('exit video')
