@@ -10,19 +10,19 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\" target=\"_blank\">\n    <span class=\"url-name\">";
+    + "\" target=\"_blank\" title=\"";
   if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n        <div class=\"frame-wrapper\">\n          <img height=\"30\" width=\"30\" src='//g.etfv.co/";
-  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "' />\n          \n        </div>\n    </a>\n    <span class=\"active-count\">Active: ";
+    + "\">\n        <span class=\"active-count\">";
   if (helper = helpers.peer_count) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.peer_count); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n</div>";
+    + "</span>\n        <div class=\"frame-wrapper\">\n            <img height=\"60\" width=\"60\" src='//g.etfv.co/";
+  if (helper = helpers.url) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.url); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "' />\n        </div>\n    </a>\n</div>\n";
   return buffer;
   });
 })();

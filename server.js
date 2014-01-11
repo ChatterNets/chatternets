@@ -199,6 +199,10 @@
     return res.sendfile('bookmarklet/' + req.params.file);
   });
 
+  app.get('/dashboard/:file(*)', function(req, res) {
+    return res.sendfile('dashboard/' + req.params.file);
+  });
+
   app.get('/bookmarklet/compiled/:file', function(req, res) {
     return res.sendfile('bookmarklet/compiled/' + req.params.file);
   });

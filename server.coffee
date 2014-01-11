@@ -159,6 +159,9 @@ app.get '/', (req, res) ->
 app.get '/bookmarklet/:file(*)', (req, res) ->
   res.sendfile('bookmarklet/' + req.params.file)
 
+app.get '/dashboard/:file(*)', (req, res) ->
+  res.sendfile('dashboard/' + req.params.file)
+
 app.get '/bookmarklet/compiled/:file', (req, res) ->
   res.sendfile('bookmarklet/compiled/' + req.params.file)
 app.get '/bookmarklet/library/:file', (req, res) ->
