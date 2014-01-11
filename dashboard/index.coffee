@@ -31,7 +31,7 @@ updateUI = =>
 $(document).ready =>
   console.log(Handlebars.templates)
   peer_template =  Handlebars.templates["active_peer_site"]
-  socket = io.connect('//localhost:5000');
+  socket = io.connect('//chatternets.herokuapp.com');
   socket.on 'peer_urls', (data) =>
     console.log(data);
     for item in data

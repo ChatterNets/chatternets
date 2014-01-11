@@ -54,7 +54,7 @@
     var socket;
     console.log(Handlebars.templates);
     peer_template = Handlebars.templates["active_peer_site"];
-    socket = io.connect('//localhost:5000');
+    socket = io.connect('//chatternets.herokuapp.com');
     socket.on('peer_urls', function(data) {
       var item, _i, _len;
       console.log(data);
