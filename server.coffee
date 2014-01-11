@@ -41,12 +41,12 @@ onPeerConnected = (urlRaw) ->
   for urlId in urlToURLIds[urlNormal]
     if not urlIdToPeerIds.hasOwnProperty(urlId)
       urlIdToPeerIds[urlId] = [peerId]
-      return { peerId: peerId, urlId: urlId, peerIds: []}
+      return { peer_id: peerId, url_id: urlId, peers: []}
 
     if urlIdToPeerIds[urlId].length < MAX_ROOM_SIZE
       peerIds = urlIdToPeerIds[urlId].slice(0)
       urlIdToPeerIds[urlId].push(peerId)
-      return { peerId: peerId, urlId: urlId, peerIds: peerIds}
+      return { peer_id: peerId, url_id: urlId, peers: peerIds}
 
   # If we get here, that means we didn't find a room to join.
   # So, we create one.
@@ -54,7 +54,7 @@ onPeerConnected = (urlRaw) ->
   urlIdToURL[urlId] = urlNormal
   urlToURLIds[urlNormal].push(urlId)
   urlIdToPeerIds[urlId] = [peerId]
-  return { peerId: peerId, urlId: urlId, peerIds: []}
+  return { peer_id: peerId, url_id: urlId, peers: []}
 
 # Remove the peer from the room identified by urlId.
 # Perform any cleanup necessary.
@@ -115,7 +115,7 @@ app.post '/new_peer', (req, res) ->
   console.log(JSON.stringify(urlToURLIds, null, 4))
   console.log(JSON.stringify(urlIdToURL, null, 4))
   console.log(JSON.stringify(urlIdToPeerIds, null, 4))
-  res.send(result)
+  res.send(JSON.stringify(result))
 
 app.post '/delete_peer', (req, res) ->
   result = onPeerDisconnected(req.body.peer_id, req.body.url_id)

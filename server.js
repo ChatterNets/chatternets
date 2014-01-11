@@ -47,18 +47,18 @@
       if (!urlIdToPeerIds.hasOwnProperty(urlId)) {
         urlIdToPeerIds[urlId] = [peerId];
         return {
-          peerId: peerId,
-          urlId: urlId,
-          peerIds: []
+          peer_id: peerId,
+          url_id: urlId,
+          peers: []
         };
       }
       if (urlIdToPeerIds[urlId].length < MAX_ROOM_SIZE) {
         peerIds = urlIdToPeerIds[urlId].slice(0);
         urlIdToPeerIds[urlId].push(peerId);
         return {
-          peerId: peerId,
-          urlId: urlId,
-          peerIds: peerIds
+          peer_id: peerId,
+          url_id: urlId,
+          peers: peerIds
         };
       }
     }
@@ -67,9 +67,9 @@
     urlToURLIds[urlNormal].push(urlId);
     urlIdToPeerIds[urlId] = [peerId];
     return {
-      peerId: peerId,
-      urlId: urlId,
-      peerIds: []
+      peer_id: peerId,
+      url_id: urlId,
+      peers: []
     };
   };
 
@@ -133,7 +133,7 @@
     console.log(JSON.stringify(urlToURLIds, null, 4));
     console.log(JSON.stringify(urlIdToURL, null, 4));
     console.log(JSON.stringify(urlIdToPeerIds, null, 4));
-    return res.send(result);
+    return res.send(JSON.stringify(result));
   });
 
   app.post('/delete_peer', function(req, res) {
