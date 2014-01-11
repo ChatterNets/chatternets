@@ -1,3 +1,4 @@
+(function() {
 // TODO(brie): we don't really need jquery, but adding it for speed.
 // we can take it out later
 var chatternet_unique_page_id = window.location.host + Math.random().toString(36).slice(2);
@@ -10,6 +11,9 @@ chatternet_jquery_loading_script.onload = function() {
 
     var frame = $("<iframe/>");
     frame.attr("src", "//localhost:5000/bookmarklet/chatternets.html?chatterid=" + chatternet_unique_page_id);
+
+    var frameWidth = "400px";
+
     frame.css({
         margin: "0px",
         padding: "0px",
@@ -19,10 +23,11 @@ chatternet_jquery_loading_script.onload = function() {
         right: 0,
         resize: "none",
         zIndex: 2147483647,
-        width: "400px",
+        width: frameWidth,
         height: "100%"
     });
-    $("body").append(frame);
+
+    $("body").css("paddingRight", frameWidth).append(frame);
     
     window.onbeforeunload = function() {
         console.log("before unloading")
@@ -37,3 +42,4 @@ chatternet_jquery_loading_script.onload = function() {
     }
 };
 document.head.appendChild(chatternet_jquery_loading_script);
+})();
