@@ -59,6 +59,7 @@ class Chatternet
     , () =>
         console.log "error starting local stream"
         $('#setup-error').show()
+        $("#setup-instructions").hide()
 
   # Create the local video stream, send video calls to peers
   handleStartedLocalStream: (stream, peerIdsToConnect) =>

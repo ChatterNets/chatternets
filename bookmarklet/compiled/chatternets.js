@@ -87,7 +87,8 @@
         return _this.handleStartedLocalStream(stream, peerIdsToConnect);
       }, function() {
         console.log("error starting local stream");
-        return $('#setup-error').show();
+        $('#setup-error').show();
+        return $("#setup-instructions").hide();
       });
     };
 

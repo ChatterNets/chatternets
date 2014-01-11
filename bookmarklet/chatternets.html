@@ -25,36 +25,53 @@ h1 {
 }
 
 #setup-instructions {
-    background-color: rgba(255, 220, 130, 0.9);
+    background-color: antiquewhite; /*rgba(255, 220, 130, 0.9)*/
     border: none;
-    position: absolute;
+/*    position: absolute;*/
     top: 0;
     right: 0;
     left: 0;
     z-index: 10;
 
-    animation-delay: 0.5s;
-    -webkit-animation-delay: 0.5s;
-    -moz-animation-delay: 0.5s;
-    animation-duration: 2s;
-    -webkit-animation-duration: 2s;
-    -moz-animation-duration: 2s;
+/*    animation-delay: 0.1;
+    -webkit-animation-delay: 0.1;
+    -moz-animation-delay: 0.1;*/
+    animation-duration: .8s;
+    -webkit-animation-duration: .8s;
+    -moz-animation-duration: .8s;
 }
 
 .sample-user.me {
-    box-shadow: 0 0 5px #333 inset;
+    /*box-shadow: 0 0 5px #333 inset;*/
+/*    margin-right: 10px;
+    border-radius: 8px;*/
+    box-shadow: 0 0 8px #333;
+    margin: 10px 11px;
+    border-radius: 10px;
+}
+.sample-user.place-user {
+    visibility: hidden;
+    margin-left: 10px;
+    border-radius: 8px;
+}
+.sample-user.place-user i {
+    font-size: 50px;
+        padding: 25px;*
 }
 .sample-user.me i {
-    font-size: 50px;
-    padding: 25px;
+/*    font-size: 50px;
+    padding: 25px;*/
+    display: block;
+    padding: 40px;
+    font-size: 80px;
 }
 
 .sample-user {
     color: #333;
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: rgba(240, 255, 255, 0.9);
 }
 .sample-user.other {
-    margin: 10px;
+    margin: 10px 11px;
     border-radius: 10px;
     box-shadow: 0 0 10px #333;
 }
@@ -65,18 +82,26 @@ h1 {
 }
 
 .my-video-container #my-video {
-    width: 130px;
+    width: 220px;
     height: auto;
-    padding: 0 0 7px 8px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 0 0 0 10px;
+    margin: 4px;
+    padding: 7px 8px;
+    background-color: rgba(240, 255, 255, 0.5);
+    /*border-radius: 10px;*/
     margin-bottom: 10px;
 }
 
 .my-video-container.user {
-    text-align: right;
+    text-align: center;
     display: block;
+    margin-top: 1em;
 }
+#video-container .user .their-video {
+    padding: 7px 8px;
+    background-color: rgba(240, 255, 255, 0.5);
+    margin: 10px;
+}
+
 .user {
     display: inline-block;
     text-align: center;
@@ -96,7 +121,7 @@ h1 {
 }
 
 .their-video {
-    width: 200px;
+    width: 170px;
     height: auto;
 }
 
@@ -119,6 +144,15 @@ h1 {
     font-weight: bold;
 }
 
+.title-chat {
+    display: block;
+    bottom: 0px;
+    z-index: -1;
+    font-size: 4em;
+}
+#sample-user-container {
+    margin-left: 10px;
+}
 </style>
 </head>
 
@@ -130,39 +164,43 @@ $(function() {
 
     var $container = $('#sample-user-container');
     $container.masonry({
-        columnWidth: 20,
+        columnWidth: 10,
         itemSelector: '.sample-user',
-        isOriginLeft: false
+        isOriginLeft: true
     });
 
     var numUsersAdded = 0;
     var interval = setInterval(function() {
-        $(".sample-user")
-            .removeClass("u" + (numUsersAdded-1))
-            .addClass("u" + numUsersAdded);
-        
-        var elem = $("<div />").addClass(
-            "sample-user other u" + numUsersAdded);
+        if (numUsersAdded > 0) {
+            $(".sample-user")
+                .removeClass("u" + (numUsersAdded-1))
+                .addClass("u" + numUsersAdded);
+            
+            var elem = $("<div />").addClass(
+                "sample-user other u" + numUsersAdded);
 
-        var icon = $("<i />").addClass("fa fa-users");
+            var icon = $("<i />").addClass("fa fa-users");
 
-        elem.append(icon);
+            elem.append(icon);
+        } else {
+            elem = $('<div class="sample-user me"><i class="fa fa-user"></i></div>')
+        }
         $container.append(elem);
         $container.masonry('appended', elem);
         $container.masonry();
 
         numUsersAdded++;
-        if (numUsersAdded == 9) {
+        if (numUsersAdded === 3) {
             window.clearInterval(interval);
         }
-    }, 200);
+    }, 400);
 
     var waitingForUsers = true;
     var $videoContainer = $("#video-container");
     $videoContainer.on("user_connected", function() {
         console.log("on user_connected");
         if (waitingForUsers) {
-            $(".waiting-message").fadeOut();
+            $(".waiting-message").slideUp();
             var $myVideo = $(".my-video-container-waiting");
             $myVideo.removeClass("well my-video-container-waiting");
             $myVideo.addClass("my-video-container user");
@@ -181,39 +219,41 @@ $(function() {
 </script>
 
 <div class="intro">
+    <div id="setup-error" class="well">
+        <p>
+        <h3>Failed to access your webcam and microphone.</h3>
+        Be sure to click 'allow' when asked for permission by the
+        browser. Try refreshing the page and trying again.
+        </p>
+    </div>
+
     <div id="setup-instructions" class="well">
-        <h1>Welcome to Chatternet!</h1>
         <h2>
             <span class="glyphicon glyphicon-arrow-up"></span>
             Click "Allow"
             <span class="glyphicon glyphicon-arrow-up"></span>
         </h2>
+        <h1>Enter the Chatternet</h1>
 
         <p>
-            Please click "allow" on the top of the screen so we can access your
+            Please click "allow" on the top of the screen to access your
             webcam and microphone for calls.
         </p>
     </div>
 
-
     <div id="sample-user-container">
-        <div class="sample-user me">
-            <i class="fa fa-user"></i>
-        </div>
+    <div class="sample-user place-user">
+        <i class="fa fa-user"></i>
     </div>
+    </div>
+<!--
+      
+    -->
 </div>
 
-<div id="setup-error">
-    <p>
-    Failed to access the webcam and microphone. Make sure to run this demo
-    on an http server and click allow when asked for permission by the
-    browser. (reload, todo enable retry)
-    </p>
-</div>
 
 <!-- Video area -->
 <div id="video-container">
-    <h1>Chatternet</h1>
 
     <div class="well my-video-container-waiting">
         <video id="my-video" muted="true" autoplay></video>
@@ -221,12 +261,13 @@ $(function() {
 
     <div class="waiting-message well">
         <h5><span class="glyphicon glyphicon-earphone"></span>
-            Waiting for other chatternetters...</h5>
+            Waiting for others to join... tell others to open this page with chatternet to start a conversation!</h5>
         <div class="progress progress-striped active">
             <div class="progress-bar progress-bar-success" style="width: 100%"></div>
         </div>
     </div>
 
+    <h1 class='title-chat'>Chatternets</h1>
 </div>
 
 </body>
