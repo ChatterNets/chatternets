@@ -59,21 +59,36 @@ onPeerConnected = (urlRaw) ->
 # Remove the peer from the room identified by urlId.
 # Perform any cleanup necessary.
 onPeerDisconnected = (peerId, urlId) ->
+  if not urlIdToPeerIds.hasOwnProperty(urlId)
+    return { success: false, message: "That urlId was not recognized" }
+
+  # Remove the peer id from the url id's room
   index = urlIdToPeerIds[urlId].indexOf(peerId)
   if index == -1
-    return
+    return {
+      success: false,
+      message: "That peerId, urlId pair was not recognized" }
   urlIdToPeerIds[urlId].splice(index, 1)
 
+  # If the removed peer was the last peer, do some clean up...
   if urlIdToPeerIds[urlId].length == 0
     delete urlIdToPeerIds[urlId]
+
+    # Remove the url id from the url id -> url map
     url = urlIdToURL[urlId]
     delete urlIdToURL[urlId]
+
+    # Remove the url id from the url -> [url id] map
     index = urlToURLIds[url].indexOf(urlId)
     if index == -1
       return
     urlToURLIds[url].splice(index, 1)
+
+    # If this was the last url id, remove the url
     if urlToURLIds[url].length == 0
       delete urlToURLIds[url]
+
+  return { success: true }
 
 #####################
 # Server code
@@ -96,12 +111,15 @@ app.post '/new_peer', (req, res) ->
   res.send(result)
 
 app.post '/delete_peer', (req, res) ->
-  onPeerDisconnected(req.body.peer_id, req.body.url_id)
+  result = onPeerDisconnected(req.body.peer_id, req.body.url_id)
   # TODO(brie): remove this. left in for now, for debugging
   console.log(JSON.stringify(urlToURLIds, null, 4))
   console.log(JSON.stringify(urlIdToURL, null, 4))
   console.log(JSON.stringify(urlIdToPeerIds, null, 4))
-  res.send(200)
+  if result.success
+    res.send(200)
+  else
+    res.send(500, { error: result.message })
 
 app.post '/update_peer', (req, res) ->
   res.send('TODO - not implemented')

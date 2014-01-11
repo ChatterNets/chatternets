@@ -75,9 +75,18 @@
 
   onPeerDisconnected = function(peerId, urlId) {
     var index, url;
+    if (!urlIdToPeerIds.hasOwnProperty(urlId)) {
+      return {
+        success: false,
+        message: "That urlId was not recognized"
+      };
+    }
     index = urlIdToPeerIds[urlId].indexOf(peerId);
     if (index === -1) {
-      return;
+      return {
+        success: false,
+        message: "That peerId, urlId pair was not recognized"
+      };
     }
     urlIdToPeerIds[urlId].splice(index, 1);
     if (urlIdToPeerIds[urlId].length === 0) {
@@ -90,9 +99,12 @@
       }
       urlToURLIds[url].splice(index, 1);
       if (urlToURLIds[url].length === 0) {
-        return delete urlToURLIds[url];
+        delete urlToURLIds[url];
       }
     }
+    return {
+      success: true
+    };
   };
 
   app.get('/', function(req, res) {
@@ -117,11 +129,18 @@
   });
 
   app.post('/delete_peer', function(req, res) {
-    onPeerDisconnected(req.body.peer_id, req.body.url_id);
+    var result;
+    result = onPeerDisconnected(req.body.peer_id, req.body.url_id);
     console.log(JSON.stringify(urlToURLIds, null, 4));
     console.log(JSON.stringify(urlIdToURL, null, 4));
     console.log(JSON.stringify(urlIdToPeerIds, null, 4));
-    return res.send(200);
+    if (result.success) {
+      return res.send(200);
+    } else {
+      return res.send(500, {
+        error: result.message
+      });
+    }
   });
 
   app.post('/update_peer', function(req, res) {
