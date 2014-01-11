@@ -142,7 +142,7 @@
       console.log("call peer id is " + call.peer);
       videoClass = "their-video " + call.peer;
       videoSelector = "#video-container .their-video." + call.peer;
-      $("#video-container").append("<div class='user'><video class='" + videoClass + "' autoplay></video></div>").trigger('user_connected');
+      $("#video-container").append("<div class='user other'><video class='" + videoClass + "' autoplay></video><div class='mic'>" + "<i class='fa fa-microphone-slash'></i></div></div>").trigger('user_connected');
       call.on('stream', function(stream) {
         return $(videoSelector).prop('src', URL.createObjectURL(stream));
       });
@@ -232,17 +232,20 @@
     chatternet = new Chatternet(ui);
     chatternet.start();
     return $("#video-container").on('click', "video.their-video", function(evt) {
-      var videoElem;
+      var micElem, videoElem;
       videoElem = $(evt.currentTarget);
+      micElem = videoElem.parent().find(".mic i");
       console.log(videoElem);
       if (videoElem.prop('muted')) {
         videoElem.prop('muted', false);
         videoElem.attr('muted', false);
         videoElem.removeClass("muted-video");
+        micElem.removeClass("fa-microphone").addClass("fa-microphone-slash");
       } else {
         videoElem.prop('muted', true);
         videoElem.attr('muted', true);
         videoElem.addClass("muted-video");
+        micElem.removeClass("fa-microphone-slash").addClass("fa-microphone");
       }
       return console.log(videoElem.prop('muted'));
     });

@@ -106,9 +106,28 @@ h1 {
     margin: 10px;
 }
 
+#video-container .user .mic {
+    display: none;
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    font-size: 50px;
+    margin-top: -36px;
+    margin-right: -18px;
+    color: #CCC;
+}
+#video-container .user.other:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+#video-container .user:hover .mic {
+    display: block;
+    cursor: pointer;
+}
+
 .user {
     display: inline-block;
     text-align: center;
+    position: relative;
 }
 
 .my-video-container-waiting #my-video {
