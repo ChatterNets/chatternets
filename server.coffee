@@ -22,6 +22,7 @@ MAX_ROOM_SIZE = 5
 urlToURLIds = {}
 urlIdToURL = {}
 urlIdToPeerIds = {}
+pageIdToPeerAndUrlId = {}
 
 # The following conditions hold, as a result of this function:
 # - the connected peer has been given an id
@@ -29,39 +30,53 @@ urlIdToPeerIds = {}
 #   other peers
 #
 # Returns: peer id that has been created for the connected user
-onPeerConnected = (urlRaw) ->
+onPeerConnected = (urlRaw, pageId) ->
   urlNormal = normalizeURL(urlRaw)
 
-  if not urlToURLIds.hasOwnProperty(urlNormal)
+  if not urlToURLIds.hasOwnProperty(urlNormal)  # If the raw URL isn't yet mapped, map it.
     urlId = generateId()
     urlIdToURL[urlId] = urlNormal
     urlToURLIds[urlNormal] = [urlId]
 
   peerId = generateId()
-
+  peerIds = []
+  roomFound = false
   for urlId in urlToURLIds[urlNormal]
     if not urlIdToPeerIds.hasOwnProperty(urlId)
+      # We are the first peer for this id
       urlIdToPeerIds[urlId] = [peerId]
-      return { peer_id: peerId, url_id: urlId, peers: []}
+      roomFound = true
+      break
 
     if urlIdToPeerIds[urlId].length < MAX_ROOM_SIZE
+      # There is space in this id for us
       peerIds = urlIdToPeerIds[urlId].slice(0)
       urlIdToPeerIds[urlId].push(peerId)
-      return { peer_id: peerId, url_id: urlId, peers: peerIds}
+      roomFound = true
+      break
 
-  # If we get here, that means we didn't find a room to join.
-  # So, we create one.
-  urlId = generateId()
-  urlIdToURL[urlId] = urlNormal
-  urlToURLIds[urlNormal].push(urlId)
-  urlIdToPeerIds[urlId] = [peerId]
-  return { peer_id: peerId, url_id: urlId, peers: []}
+  if not roomFound
+    # If we get here, that means we didn't find a room to join.
+    # So, we create one.
+    urlId = generateId()
+    urlIdToURL[urlId] = urlNormal
+    urlToURLIds[urlNormal].push(urlId)
+    urlIdToPeerIds[urlId] = [peerId]
+  pageIdToPeerAndUrlId[pageId] = {"peerId": peerId, "urlId": urlId}
+  return { peer_id: peerId, url_id: urlId, peers: peerIds}
 
 # Remove the peer from the room identified by urlId.
 # Perform any cleanup necessary.
-onPeerDisconnected = (peerId, urlId) ->
-  if not urlIdToPeerIds.hasOwnProperty(urlId)
-    return { success: false, message: "That url_id was not recognized" }
+onPeerDisconnected = (pageId) ->
+  console.log "disconnecting..."
+  console.log pageId
+  # console.log(JSON.stringify(pageIdToPeerAndUrlId, null, 4))
+
+  if not pageIdToPeerAndUrlId[pageId]
+    return { success: false, message: "That page id was not recognized" }
+
+  peerId = pageIdToPeerAndUrlId[pageId].peerId
+  urlId = pageIdToPeerAndUrlId[pageId].urlId
 
   # Remove the peer id from the url id's room
   index = urlIdToPeerIds[urlId].indexOf(peerId)
@@ -82,6 +97,7 @@ onPeerDisconnected = (peerId, urlId) ->
     # Remove the url id from the url -> [url id] map
     index = urlToURLIds[url].indexOf(urlId)
     if index == -1
+      console.log("Something is horribly wrong")
       return
     urlToURLIds[url].splice(index, 1)
 
@@ -89,6 +105,7 @@ onPeerDisconnected = (peerId, urlId) ->
     if urlToURLIds[url].length == 0
       delete urlToURLIds[url]
 
+  delete pageIdToPeerAndUrlId[pageId]
   return { success: true }
 
 # These functions must take in (peerId, urlId) and return
@@ -115,61 +132,54 @@ app.get '/bookmarklet/library/:file', (req, res) ->
 
 # Create a new peer for the given url
 app.post '/new_peer', (req, res) ->
-  if not req.body.hasOwnProperty("full_url")
-    res.send(500, { error: "Must specify full_url parameter" })
+  if not req.body.hasOwnProperty("full_url") or not req.body.hasOwnProperty("page_id")
+    res.send(500, { error: "Must specify full_url and page_id parameters" })
     return
 
-  result = onPeerConnected(req.body.full_url)
-  # TODO(brie): remove this. left in for now, for debugging
-  console.log(JSON.stringify(urlToURLIds, null, 4))
-  console.log(JSON.stringify(urlIdToURL, null, 4))
-  console.log(JSON.stringify(urlIdToPeerIds, null, 4))
+  result = onPeerConnected(req.body.full_url, req.body.page_id)
   res.send(JSON.stringify(result))
 
 # Delete myself as a peer, given my peer id and the url id that I'm part of
 app.post '/delete_peer', (req, res) ->
-  if not (req.body.hasOwnProperty("peer_id") and
-        req.body.hasOwnProperty("url_id"))
-    res.send(500, { error: "Must specify peer_id and url_id parameters" })
+  res.header("Access-Control-Allow-Origin", "*")  # Allow cross-site scripting here
+  if not (req.body.hasOwnProperty("page_id"))
+    console.log("ERROR: req body has no page_id param")
+    res.send(500, { error: "Must specify page_id parameter" })
     return
 
-  result = onPeerDisconnected(req.body.peer_id, req.body.url_id)
-  # TODO(brie): remove this. left in for now, for debugging
-  console.log(JSON.stringify(urlToURLIds, null, 4))
-  console.log(JSON.stringify(urlIdToURL, null, 4))
-  console.log(JSON.stringify(urlIdToPeerIds, null, 4))
+  result = onPeerDisconnected(req.body.page_id)
   if result.success
+    console.log("SUCCESS!")
     res.send(200)
   else
+    console.log("ERROR: " + result.message)
     res.send(500, { error: result.message })
 
 # Update the status of some other peer, given their peer id, the url id, and
 # what state I'm reporting for them.
 # Valid statuses are those contained in VALID_UPDATE_STATUSES.
-app.post '/update_peer', (req, res) ->
-  if not (req.body.hasOwnProperty("peer_id") and
-        req.body.hasOwnProperty("url_id") and
-        req.body.hasOwnProperty("status"))
-    res.send(500, {
-      error: "Must specify peer_id, url_id, and status parameters" })
-    return
+# app.post '/update_peer', (req, res) ->
+#   if not (req.body.hasOwnProperty("peer_id") and req.body.hasOwnProperty("url_id") and req.body.hasOwnProperty("status"))
+#     res.send(500, {
+#       error: "Must specify peer_id, url_id, and status parameters" })
+#     return
 
-  if not VALID_UPDATE_STATUSES.hasOwnProperty(req.body.status)
-    res.send(500, { error: req.body.status + " is not a valid status" })
-    return
+#   if not VALID_UPDATE_STATUSES.hasOwnProperty(req.body.status)
+#     res.send(500, { error: req.body.status + " is not a valid status" })
+#     return
 
-  result = VALID_UPDATE_STATUSES[req.body.status](
-    req.body.peer_id, req.body.url_id)
+#   result = VALID_UPDATE_STATUSES[req.body.status](
+#     req.body.peer_id, req.body.url_id)
 
-  # TODO(brie): remove this. left in for now, for debugging
-  console.log(JSON.stringify(urlToURLIds, null, 4))
-  console.log(JSON.stringify(urlIdToURL, null, 4))
-  console.log(JSON.stringify(urlIdToPeerIds, null, 4))
+#   # TODO(brie): remove this. left in for now, for debugging
+#   console.log(JSON.stringify(urlToURLIds, null, 4))
+#   console.log(JSON.stringify(urlIdToURL, null, 4))
+#   console.log(JSON.stringify(urlIdToPeerIds, null, 4))
 
-  if result.success
-    res.send(200)
-  else
-    res.send(500, { error: result.message })
+#   if result.success
+#     res.send(200)
+#   else
+#     res.send(500, { error: result.message })
 
 
 port = process.env.PORT || 5000
