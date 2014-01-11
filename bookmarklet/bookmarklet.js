@@ -10,7 +10,7 @@ chatternet_jquery_loading_script.src = "//ajax.googleapis.com/ajax/libs/jquery/1
 chatternet_jquery_loading_script.onload = function() {
 
     var frame = $("<iframe/>");
-    frame.attr("src", "//localhost:5000/bookmarklet/chatternets.html?chatterid=" + chatternet_unique_page_id);
+    frame.attr("src", "//chatternets.herokuapp.com/bookmarklet/chatternets.html?chatterid=" + chatternet_unique_page_id);
 
     var frameWidth = "400px";
 
@@ -37,7 +37,7 @@ chatternet_jquery_loading_script.onload = function() {
     window.onbeforeunload = function() {
         console.log("before unloading")
         $.ajax({ /* //chatternets.herokuapp.com */
-          url: '//localhost:5000/delete_peer',
+          url: '//chatternets.herokuapp.com/delete_peer',
           type: "POST",
           data: {
               page_id: chatternet_unique_page_id
