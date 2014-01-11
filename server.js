@@ -135,7 +135,7 @@
     console.log(JSON.stringify(urlToURLIds, null, 4));
     console.log(JSON.stringify(urlIdToURL, null, 4));
     console.log(JSON.stringify(urlIdToPeerIds, null, 4));
-    return res.send(result);
+    return res.send(JSON.stringify(result));
   });
 
   app.post('/delete_peer', function(req, res) {

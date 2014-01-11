@@ -2,14 +2,60 @@
 <html>
 <head>
   <title>Chatternet Frame</title>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  <script type="text/javascript" src="http://cdn.peerjs.com/0.3/peer.js"></script>
   <script src="compiled/chatternets.js"></script>
 <style>
 body {
   background-color: lightsteelblue;
 }
+
+
+#my-video {
+  margin-top: 15px;
+  width: 70px;
+  height: auto;
+  background-color: lightblue;
+}
+
+.their-video {
+  width: 100px;
+  height: auto;
+  background-color: lightblue;
+}
+
+#video-container {
+  padding: 25px;
+  text-align: center;
+}
+
+#setup-error {
+  display: none;
+}
+
+#my-id {
+  font-weight: bold;
+}
+
 </style>
 </head>
+
 <body>
-<h1>Chatternets</h1>
+<h2>Chatternet</h2>
+<p>Your id: <span id="my-id">??</span></p>
+
+<!-- Video area -->
+<div id="video-container">
+  <video id="my-video" muted="true" autoplay></video>
+</div>
+
+<!-- Instructions-->
+<div id="setup-instructions">
+  <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
+  <div id="setup-error">
+    <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser. (reload, todo enable retry)</p>
+  </div>
+</div>
+
 </body>
 </html>

@@ -121,7 +121,7 @@ app.post '/new_peer', (req, res) ->
   console.log(JSON.stringify(urlToURLIds, null, 4))
   console.log(JSON.stringify(urlIdToURL, null, 4))
   console.log(JSON.stringify(urlIdToPeerIds, null, 4))
-  res.send(result)
+  res.send(JSON.stringify(result))
 
 # Delete myself as a peer, given my peer id and the url id that I'm part of
 app.post '/delete_peer', (req, res) ->
