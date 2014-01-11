@@ -63,9 +63,11 @@ class Chatternet
   # Create the local video stream, send video calls to peers
   handleStartedLocalStream: (stream, peerIdsToConnect) =>
     # Set your video display
+    $('#setup-instructions').addClass('animated slideOutUp');
+    $('.intro').fadeOut('slow')
+    $('#video-container').show()
     $('#my-video').prop('src', URL.createObjectURL(stream))
     window.localStream = stream
-    $('#setup-instructions').hide()
 
     console.log "loaded local stream"
     for peerId in peerIdsToConnect
@@ -100,7 +102,10 @@ class Chatternet
     console.log("call peer id is " + call.peer)
     videoClass = "their-video " + call.peer
     videoSelector = "#video-container .their-video." + call.peer
-    $("#video-container").append("<video class='" + videoClass+ "' autoplay></video>")
+    $("#video-container")
+      .append("<div class='user'><video class='" +
+        videoClass+ "' autoplay></video></div>")
+      .trigger('user_connected')
     call.on 'stream', (stream) ->
       $(videoSelector).prop('src', URL.createObjectURL(stream))
     call.on 'close', =>

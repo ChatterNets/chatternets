@@ -156,7 +156,7 @@ VALID_UPDATE_STATUSES = {
 app.get '/', (req, res) ->
   res.sendfile('dashboard/index.html')
 
-app.get '/bookmarklet/:file', (req, res) ->
+app.get '/bookmarklet/:file(*)', (req, res) ->
   res.sendfile('bookmarklet/' + req.params.file)
 
 app.get '/bookmarklet/compiled/:file', (req, res) ->
@@ -168,6 +168,7 @@ app.get '/dashboard/compiled/:file', (req, res) ->
   res.sendfile('dashboard/compiled/' + req.params.file)
 app.get '/dashboard/library/:file', (req, res) ->
   res.sendfile('dashboard/library/' + req.params.file)
+
 # Create a new peer for the given url
 app.post '/new_peer', (req, res) ->
   if not req.body.hasOwnProperty("full_url") or not req.body.hasOwnProperty("page_id")

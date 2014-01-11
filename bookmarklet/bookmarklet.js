@@ -26,9 +26,14 @@ chatternet_jquery_loading_script.onload = function() {
         width: frameWidth,
         height: "100%"
     });
+    $("html").css({
+        paddingRight: frameWidth,
+        overflow: "scroll"
+    });
+    $("body").css("overflow", "scroll").after(frame);
 
     $("body").css("paddingRight", frameWidth).append(frame);
-    
+
     window.onbeforeunload = function() {
         console.log("before unloading")
         $.ajax({
