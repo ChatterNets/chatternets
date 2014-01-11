@@ -65,17 +65,21 @@ h1 {
 }
 
 #my-video {
-    width: 100px;
-    height: 75px;
+    width: 130px;
+    height: auto;
+    padding: 0 0 7px 8px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0 0 0 10px;
+    margin-bottom: 10px;
 }
 
 .my-video-container.user {
-    float: none;
     text-align: right;
+    display: block;
 }
 .user {
-    float: right;
-    margin-left: 6px;
+    display: inline-block;
+    text-align: center;
 }
 
 .my-video-container-waiting #my-video {
@@ -92,12 +96,18 @@ h1 {
 }
 
 .their-video {
-    width: 194px;
-    height: 98px;
+    width: 200px;
+    height: auto;
 }
 
 #video-container {
     display: none;
+}
+
+#video-container h1 {
+    float: left;
+    margin: 10px 0 0 15px;
+    color: rgba(255, 255, 255, 0.1);
 }
 
 #setup-error {
@@ -202,6 +212,8 @@ $(function() {
 
 <!-- Video area -->
 <div id="video-container">
+    <h1>Chatternet</h1>
+
     <div class="well my-video-container-waiting">
         <video id="my-video" muted="true" autoplay></video>
     </div>
