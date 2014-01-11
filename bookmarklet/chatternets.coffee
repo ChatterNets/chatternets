@@ -90,10 +90,9 @@ class Chatternet
   # or us calling another peer.
   addPeerVideoCall: (call) =>
     # Wait for stream on the call, then set peer video display
-    console.log call.peer
-    console.log("call peer id: " + call.peer.id)
-    videoClass = "their-video " + call.peer.id
-    videoSelector = "#video-container .their-video." + call.peer.id
+    console.log("call peer id is " + call.peer)
+    videoClass = "their-video " + call.peer
+    videoSelector = "#video-container .their-video." + call.peer
     $("#video-container").append("<video class='" + videoClass+ "' autoplay></video>")
     call.on 'stream', (stream) ->
       $(videoSelector).prop('src', URL.createObjectURL(stream))
