@@ -123,6 +123,10 @@
     return res.sendfile('bookmarklet/compiled/' + req.params.file);
   });
 
+  app.get('/bookmarklet/library/:file', function(req, res) {
+    return res.sendfile('bookmarklet/library/' + req.params.file);
+  });
+
   app.post('/new_peer', function(req, res) {
     var result;
     if (!req.body.hasOwnProperty("full_url")) {
