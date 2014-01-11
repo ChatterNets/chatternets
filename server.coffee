@@ -102,7 +102,7 @@ onPeerDisconnected = (pageId) ->
   peerId = pageIdToPeerAndUrlId[pageId].peerId
   urlId = pageIdToPeerAndUrlId[pageId].urlId
   url = urlIdToURL[urlId]
-  
+
   # Remove the peer id from the url id's room
   index = urlIdToPeerIds[urlId].indexOf(peerId)
   if index == -1
@@ -216,8 +216,6 @@ port = process.env.PORT || 5000
 
 server.listen port, ->
   console.log("Listening on " + port)
-
-im = require('imagemagick');
 
 
 io.sockets.on 'connection', (socket) =>
