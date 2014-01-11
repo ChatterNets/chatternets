@@ -3,7 +3,10 @@
 express = require("express")
 logfmt = require("logfmt")
 uuid = require('node-uuid')
+io = require('socket.io')
 app = express()
+server = require('http').createServer(app)
+io = io.listen(server)
 
 app.use(logfmt.requestLogger())
 app.use(express.bodyParser())
@@ -23,6 +26,24 @@ urlToURLIds = {}
 urlIdToURL = {}
 urlIdToPeerIds = {}
 pageIdToPeerAndUrlId = {}
+
+getPeerCount = (url) =>
+  urlPeercount = 0
+  return 0 if not urlToURLIds[url]
+  for urlId in urlToURLIds[url]
+    console.log urlIdToPeerIds[urlId]
+    urlPeercount += if urlIdToPeerIds[urlId] then urlIdToPeerIds[urlId].length else 0
+  return urlPeercount
+
+getFullSummary = =>
+  summary = []
+  for url, urlIds of urlToURLIds
+    urlPeercount = getPeerCount(url)
+    summary.push([url, urlPeercount])
+    console.log("URL: " + url + " peercount: " + urlPeercount)
+  summary.sort (item) =>
+    return item[1]
+  return summary
 
 # The following conditions hold, as a result of this function:
 # - the connected peer has been given an id
@@ -63,6 +84,9 @@ onPeerConnected = (urlRaw, pageId) ->
     urlToURLIds[urlNormal].push(urlId)
     urlIdToPeerIds[urlId] = [peerId]
   pageIdToPeerAndUrlId[pageId] = {"peerId": peerId, "urlId": urlId}
+  getFullSummary() # TODO REMOVE
+  console.log "EMIT PEER CONNECTED"
+  io.sockets.emit('peer-connected', {"url": urlNormal, "peer_count": getPeerCount(urlNormal)});
   return { peer_id: peerId, url_id: urlId, peers: peerIds}
 
 # Remove the peer from the room identified by urlId.
@@ -77,7 +101,8 @@ onPeerDisconnected = (pageId) ->
 
   peerId = pageIdToPeerAndUrlId[pageId].peerId
   urlId = pageIdToPeerAndUrlId[pageId].urlId
-
+  url = urlIdToURL[urlId]
+  
   # Remove the peer id from the url id's room
   index = urlIdToPeerIds[urlId].indexOf(peerId)
   if index == -1
@@ -106,6 +131,8 @@ onPeerDisconnected = (pageId) ->
       delete urlToURLIds[url]
 
   delete pageIdToPeerAndUrlId[pageId]
+  console.log("URL" + url)
+  io.sockets.emit('peer-disconnected', {"url": url, "peer_count": getPeerCount(url)});
   return { success: true }
 
 # These functions must take in (peerId, urlId) and return
@@ -126,10 +153,13 @@ app.get '/bookmarklet/:file', (req, res) ->
 
 app.get '/bookmarklet/compiled/:file', (req, res) ->
   res.sendfile('bookmarklet/compiled/' + req.params.file)
-
 app.get '/bookmarklet/library/:file', (req, res) ->
   res.sendfile('bookmarklet/library/' + req.params.file)
 
+app.get '/dashboard/compiled/:file', (req, res) ->
+  res.sendfile('dashboard/compiled/' + req.params.file)
+app.get '/dashboard/library/:file', (req, res) ->
+  res.sendfile('dashboard/library/' + req.params.file)
 # Create a new peer for the given url
 app.post '/new_peer', (req, res) ->
   if not req.body.hasOwnProperty("full_url") or not req.body.hasOwnProperty("page_id")
@@ -184,6 +214,21 @@ app.post '/delete_peer', (req, res) ->
 
 port = process.env.PORT || 5000
 
-app.listen port, ->
+server.listen port, ->
   console.log("Listening on " + port)
 
+im = require('imagemagick');
+
+
+io.sockets.on 'connection', (socket) =>
+  console.log 'saw connection'
+  summary = getFullSummary()
+  console.log(JSON.stringify(summary,null, 4))
+  # Send over the current data of how many people are on which pages (maybe suggest a few if none)
+  socket.emit('peer_urls', summary)
+
+
+  # Then, for each new connection that happens, emit to all sockets the new connection (?)
+  # socket.on 'video-exit', (data) =>
+  #   console.log('exit video')
+  #   console.log(data)

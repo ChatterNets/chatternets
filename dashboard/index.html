@@ -2,17 +2,75 @@
 <html>
 <head>
   <title>Chatternets Dashboard</title>
-</head>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  <script src="/dashboard/library/heap.js"></script>
+  <script src="/dashboard/library/handlebars.runtime-v1.3.0.js"></script>
+  <script src="/dashboard/compiled/active_peer_site.js"></script>
+  <script src="//localhost:5000/socket.io/socket.io.js"></script>
+  <script src="/dashboard/compiled/index.js"></script>
 <style>
 a.bookmarklet-link {
   display: inline-block;
   padding: .5em;
   background-color: #5FE9A0;
 }
+
+.active-peer-site {
+  font-size: 1em;
+  display: inline-block;
+  background-color: #F0F0F0;
+  border: 1px dotted black;
+  padding: 1em;
+/*  -moz-transform: scale(0.2, 0.2);
+  -webkit-transform: scale(0.2, 0.2);
+  -o-transform: scale(0.2, 0.2);
+  -ms-transform: scale(0.2, 0.2);
+  transform: scale(0.2, 0.2);
+  -moz-transform-origin: top left;
+  -webkit-transform-origin: top left;
+  -o-transform-origin: top left;
+  -ms-transform-origin: top left;
+  transform-origin: top left;*/
+}
+
+.active-peer-site .active-count {
+  font-size: 1.4em;
+  font-weight: 700;
+}
+.active-peer-site .url-name {
+  display:inline-block;
+    width: 200px;
+    height:20px;
+    overflow:hidden;
+}
+.active-peer-site .url-name:after {
+    content: '...';
+    position: absolute;
+    bottom: -3px;
+    right: 18px;
+}
+/*.active-peer-site iframe {
+  overflow: hidden;
+  height: 600px;
+  width: 800px;
+}*/
+.active-peer-site .frame-wrapper {
+  position: relative;
+}
+/*.active-peer-site .frame-overlay {
+  position: absolute;
+  height: 600px;
+  width: 800px;
+  top: 0px;
+  left: 0px;
+}*/
 </style>
+</head>
+
 <body>
+
 <h1>Join a Chatternet</h1>
-<h2>First, download the bookmarklet.</h2>
+<h2>First, save the bookmarklet.</h2>
 
 <p>
 Drag this link to your bookmarks bar:
@@ -20,8 +78,35 @@ Drag this link to your bookmarks bar:
 <a class="bookmarklet-link" href="javascript:(function(){document.body.appendChild(document.createElement('script')).src='//chatternets.herokuapp.com/bookmarklet/bookmarklet.js';})();">Join Chatternet</a>
 </p>
 
-<h2>Next go to a popular site and click the bookmarklet</h2>
+<h3>Next go to a popular site and click the bookmarklet once you're there.</h3>
+<p>Or, join existing chats: </p>
+<div class="active-peer-sites">
+<!--   <div class="active-peer-site demo">
+    <a href="https://news.ycombinator.com/" target="_blank">Try a new page!
+      <span class="active-count">#{peer_count}</span>
+        <div class="frame-wrapper">
+        <img height="60" width="60" src='http://getfavicon.appspot.com/https://news.ycombinator.com/' />
 
+        </div>
+    </a>
+  </div>
+  <div class="active-peer-site demo">
+    <a href="http://www.nytimes.com/" target="_blank">Try a new page!
+      <span class="active-count">#{peer_count}</span>
+        <div class="frame-wrapper">
+        <img height="60" width="60" src='http://getfavicon.appspot.com/http://www.nytimes.com/' />
+        </div>
+    </a>
+      </div>
+  <div class="active-peer-site demo">
+    <a href="https://www.google.com/" target="_blank">Try a new page!
+      <span class="active-count">#{peer_count}</span>
+        <div class="frame-wrapper">
+        <img height="60" width="60" src='http://getfavicon.appspot.com/https://www.google.com/' />
+        </div>
+    </a>
+  </div> -->
+</div>
 
 </body>
 </html>
