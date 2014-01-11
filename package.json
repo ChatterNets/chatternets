@@ -1,0 +1,30 @@
+{
+  "name": "chatternets",
+  "version": "0.0.0",
+  "description": "A WebRTC project that transforms websites into virtual meeting places by letting you video chat while browsing the internet. When you click our bookmarklet in your browser bar, you join a live video chat with others viewing the same webpage -- a chatternet.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ChatterNets/chatternets.git"
+  },
+  "keywords": [
+    "webrtc"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChatterNets/chatternets/issues"
+  },
+  "homepage": "https://github.com/ChatterNets/chatternets",
+  "dependencies": {
+    "express": "~3.4.7",
+    "logfmt": "~0.18.1"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
