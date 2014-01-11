@@ -195,7 +195,7 @@
     return res.sendfile('dashboard/index.html');
   });
 
-  app.get('/bookmarklet/:file', function(req, res) {
+  app.get('/bookmarklet/:file(*)', function(req, res) {
     return res.sendfile('bookmarklet/' + req.params.file);
   });
 

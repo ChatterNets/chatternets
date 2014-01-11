@@ -1,60 +1,199 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Chatternet Frame</title>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
-  <script type="text/javascript" src="library/peer.min.js"></script>
-  <script src="compiled/chatternets.js"></script>
+<title>Chatternet Frame</title>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+<script type="text/javascript" src="library/peer.min.js"></script>
+<script src="compiled/chatternets.js"></script>
+<script src="//cdn.jsdelivr.net/masonry/3.1.2/masonry.min.js"></script>
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
 <style>
 body {
-  background-color: lightsteelblue;
+    background-image: url("img/headerbg.png");
+    text-align: center;
 }
 
+h1 {
+    font-weight: bold;
+}
+
+.intro {
+    position: relative;
+}
+
+#setup-instructions {
+    background-color: rgba(255, 220, 130, 0.9);
+    border: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+
+    animation-delay: 2s;
+    -webkit-animation-delay: 2s;
+    -moz-animation-delay: 2s;
+    animation-duration: 2s;
+    -webkit-animation-duration: 2s;
+    -moz-animation-duration: 2s;
+}
+
+.sample-user.me {
+    box-shadow: 0 0 5px #333 inset;
+}
+.sample-user.me i {
+    font-size: 50px;
+    padding: 25px;
+}
+
+.sample-user {
+    color: #333;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+.sample-user.other {
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #333;
+}
+.sample-user.other i {
+    display: block;
+    padding: 40px;
+    font-size: 80px;
+}
 
 #my-video {
-  margin-top: 15px;
-  width: 70px;
-  height: auto;
-  background-color: lightblue;
+    width: 100%;
 }
 
 .their-video {
-  width: 100px;
-  height: auto;
-  background-color: lightblue;
+    width: 180px;
+    height: auto;
+    background-color: #eee;
 }
 
 #video-container {
-  padding: 25px;
-  text-align: center;
+    display: none;
 }
 
 #setup-error {
-  display: none;
+    display: none;
 }
 
 #my-id {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 </style>
 </head>
 
 <body>
-<h2>Chatternet</h2>
-<p>Your id: <span id="my-id">pending</span></p>
+
+<script>
+$(function() {
+    $('#setup-instructions').addClass('animated slideInDown');
+
+    var $container = $('#sample-user-container');
+    $container.masonry({
+        columnWidth: 20,
+        itemSelector: '.sample-user',
+        isOriginLeft: false
+    });
+
+    var numUsersAdded = 0;
+    var interval = setInterval(function() {
+        $(".sample-user")
+            .removeClass("u" + (numUsersAdded-1))
+            .addClass("u" + numUsersAdded);
+        
+        var elem = $("<div />").addClass(
+            "sample-user other u" + numUsersAdded);
+
+        var icon = $("<i />").addClass("fa fa-users");
+
+        elem.append(icon);
+        $container.append(elem);
+        $container.masonry('appended', elem);
+        $container.masonry();
+
+        numUsersAdded++;
+        if (numUsersAdded == 9) {
+            window.clearInterval(interval);
+        }
+    }, 300);
+
+    var waitingForUsers = true;
+    var $userContainer = $("#user-container");
+    $userContainer.on("user_connected", function() {
+        if (waitingForUsers) {
+            $(".waiting-message").fadeOut();
+            var $myVideo = $(".my-video-container");
+            $myVideo.removeClass("well");
+            $myVideo.width(100);
+            waitingForUsers = false;
+            console.log("no longer Waiting for users");
+            $userContainer.masonry({
+                columnWidth: 20,
+                itemSelector: '.user',
+                isOriginLeft: false,
+                gutter: 10
+            });
+        } else {
+            $userContainer.masonry();
+        }
+    });
+});
+</script>
+
+<div class="intro">
+    <div id="setup-instructions" class="well">
+        <h1>Welcome to Chatternet!</h1>
+        <h2>
+            <span class="glyphicon glyphicon-arrow-up"></span>
+            Click "Allow"
+            <span class="glyphicon glyphicon-arrow-up"></span>
+        </h2>
+
+        <p>
+            Please click "allow" on the top of the screen so we can access your
+            webcam and microphone for calls.
+        </p>
+    </div>
+
+
+    <div id="sample-user-container">
+        <div class="sample-user me">
+            <i class="fa fa-user"></i>
+        </div>
+    </div>
+</div>
+
+<div id="setup-error">
+    <p>
+    Failed to access the webcam and microphone. Make sure to run this demo
+    on an http server and click allow when asked for permission by the
+    browser. (reload, todo enable retry)
+    </p>
+</div>
 
 <!-- Video area -->
 <div id="video-container">
-  <video id="my-video" muted="true" autoplay></video>
-</div>
+    <div id="user-container">
+        <div class="well my-video-container user">
+            <video id="my-video" muted="true" autoplay></video>
+        </div>
+    </div>
 
-<!-- Instructions-->
-<div id="setup-instructions">
-  <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
-  <div id="setup-error">
-    <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser. (reload, todo enable retry)</p>
-  </div>
+    <div class="waiting-message well">
+        <h5><span class="glyphicon glyphicon-earphone"></span>
+            Waiting for other chatternetters...</h5>
+        <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-success" style="width: 100%"></div>
+        </div>
+    </div>
+
 </div>
 
 </body>
