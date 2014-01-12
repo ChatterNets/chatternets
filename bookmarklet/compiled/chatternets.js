@@ -63,7 +63,7 @@
       this.urlId = data.url_id;
       console.log(data.peer_id);
       this.peer = new Peer(data.peer_id, {
-        key: 'rrvwvw4tuyxpqfr',
+        key: 'mrzxr4fnkz060f6r',
         debug: true
       });
       this.peer.on("open", function() {

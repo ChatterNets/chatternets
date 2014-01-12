@@ -41,7 +41,7 @@ class Chatternet
     console.log data
     @urlId = data.url_id
     console.log data.peer_id
-    @peer = new Peer(data.peer_id, {key: 'rrvwvw4tuyxpqfr', debug: true});
+    @peer = new Peer(data.peer_id, {key: 'mrzxr4fnkz060f6r', debug: true});
     @peer.on "open", =>
       @handlePeerOpen()
     @peer.on "call", (call) =>
