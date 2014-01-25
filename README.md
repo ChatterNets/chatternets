@@ -15,7 +15,7 @@ This tutorial will walk you through how Chatternets can be used on a website. Th
 1. Go to a website of your choice (e.g. [Khan Academy](https://www.khanacademy.org/science/chemistry/introduction-to-the-atom/v/elements-and-atoms), [XKCD](http://xkcd.com/), [NYTimes](http://www.nytimes.com/)) If you have someone else that you are trying this out with, have them go to the same webpage.
 1. Click the "Join Chatternet" bookmarklet (that you dragged to the bookmarks bar earlier). If you have someone else that you are trying this out with, have them also click the bookmarklet.
 1. When you click the bookmarklet, a prompt will appear asking for video access. Allow this in order to video chat.
-1. You and any other person viewing the same webpage will now be able to video chat with each other! ![demo](http://i.imgur.com/b7v2GF9.png)
+1. You and any other person viewing the same webpage will now be able to video chat with each other! ![demo](http://farm6.staticflickr.com/5502/12141363446_489b89f967_b.jpg)
 
 
 ## Some Potential Applications
